@@ -1,7 +1,7 @@
 # Core dependencies for WAN Show Archive scripts
 yt-dlp
 requests
-whisper
+openai-whisper
 transformers
 ollama
 language-tool-python
