@@ -98,7 +98,7 @@ This software uses the following open source packages, projects, services or web
 ## You may also like...
 
 - [LICRC Sermon Transcripts](https://github.com/willtheorangeguy/LICRC-Sermon-Transcripts)
-- [WAN Transcripts]](https://github.com/willtheorangeguy/WAN-Transcripts)
+- [WAN Transcripts](https://github.com/willtheorangeguy/WAN-Transcripts)
 
 ## License
 
