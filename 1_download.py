@@ -31,5 +31,6 @@ def download_playlist(playlist_url, output_path):
 
 
 if __name__ == "__main__":
+    playlist_url = "https://www.youtube.com/playlist?list=PLvQNIIJjMEtotz4aW1lpSwLzqOXGvZpoG"
     download_playlist(playlist_url, output_path)
     print(f"Downloaded all videos from {year} to {output_path}.")

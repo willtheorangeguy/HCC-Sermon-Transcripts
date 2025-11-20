@@ -1,5 +1,5 @@
 """
-This script transcribes audio files from WAN Show episodes
+This script transcribes audio files from HCC sermons
 using OpenAI's Whisper model.
 """
 
