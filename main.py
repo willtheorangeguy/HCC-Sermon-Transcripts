@@ -11,9 +11,18 @@ scripts = [
     "1_download.py",
     "2_transcriber.py",
     "3_summarizer.py",
-    "4_cleanup.py",
+    "4_cleanup.py"
 ]
 
+# List of years
+years = [
+    "2020",
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+]
 
 def main():
     """Main function to run the scripts in order."""
@@ -21,14 +30,14 @@ def main():
         print("Usage: python main.py <year>")
         sys.exit(1)
     year = sys.argv[1]
-    for script in scripts:
-        print(f"Running {script} for year {year}...")
-        result = subprocess.run([sys.executable, script, year])
-        if result.returncode != 0:
-            print(f"Error: {script} failed with exit code {result.returncode}")
-            sys.exit(result.returncode)
+    for year in years:
+        for script in scripts:
+            print(f"Running {script} for year {year}...")
+            result = subprocess.run([sys.executable, script, year])
+            if result.returncode != 0:
+                print(f"Error: {script} failed with exit code {result.returncode}")
+                sys.exit(result.returncode)
     print("All scripts completed successfully.")
-
 
 if __name__ == "__main__":
     main()
