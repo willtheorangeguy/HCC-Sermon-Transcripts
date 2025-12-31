@@ -1,8 +1,6 @@
 """Script to extract video IDs from a YouTube playlist using yt-dlp
 and write them to a corresponding log file."""
 
-import os
-import sys
 import yt_dlp
 
 def get_playlist_video_ids(url):
@@ -32,7 +30,7 @@ if __name__ == "__main__":
     ids = get_playlist_video_ids(playlist)
 
     # Write video IDs to 'downloaded.log'
-    log_file = "downloaded.log"
+    log_file = "../downloaded.log"
     with open(log_file, "w", encoding="utf-8") as f:
         for vid in ids:
             f.write(f"youtube {vid}\n")
