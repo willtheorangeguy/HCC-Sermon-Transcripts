@@ -18,13 +18,13 @@ def download_playlist(playlist_url):
         "ignoreerrors": True,
         "download_archive": "downloaded.log",
         "outtmpl": "%(upload_date>%Y)s/%(title)s.%(ext)s",
-        "remote_components": "ejs: github"
+        "remote_components": "ejs:github"
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([playlist_url])
 
 
 if __name__ == "__main__":
-    playlist_url = "https://www.youtube.com/playlist?list=PLvQNIIJjMEtotz4aW1lpSwLzqOXGvZpoG"
-    download_playlist(playlist_url)
+    playlist = "https://www.youtube.com/playlist?list=PLvQNIIJjMEtotz4aW1lpSwLzqOXGvZpoG"
+    download_playlist(playlist)
     print("Downloaded all videos from the HCC YouTube channel.")
