@@ -26,10 +26,6 @@ years = [
 
 def main():
     """Main function to run the scripts in order."""
-    if len(sys.argv) != 2:
-        print("Usage: python main.py <year>")
-        sys.exit(1)
-    year = sys.argv[1]
     for year in years:
         for script in scripts:
             print(f"Running {script} for year {year}...")
