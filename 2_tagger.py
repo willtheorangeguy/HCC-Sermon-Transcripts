@@ -7,6 +7,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import urlopen
 from constants import YOUTUBE_API_KEY
+from mutagen import MutagenError
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, TDRC, TRCK
 
@@ -19,6 +20,7 @@ YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3/playlistItems"
 def normalize(text):
     """Normalize strings for reliable matching."""
     text = text.lower()
+    text = text.replace("_", ":")  # treat filename underscores like YouTube colons
     text = re.sub(r"\.mp3$", "", text) # remove .mp3 extension
     text = re.sub(r"[^\w\s]", "", text)  # remove punctuation
     text = re.sub(r"\s+", " ", text).strip() # collapse whitespace
@@ -111,8 +113,12 @@ def fetch_playlist_data(url):
 
 def process_year_folder(folder_path, year, title_map):
     """Process all MP3 files in the given folder,
-    matching them to playlist data and updating ID3 tags."""
+    matching them to playlist data and updating ID3 tags.
+
+    Files without a playlist match still receive baseline metadata tags.
+    """
     files_with_dates = []
+    unmatched_files = []
 
     # Path to the log file
     log_path = os.path.join(folder_path, LOG_FILENAME)
@@ -132,7 +138,9 @@ def process_year_folder(folder_path, year, title_map):
         norm_name = normalize(file)
         # Check for matching title in playlist data
         if norm_name not in title_map:
-            print(f"Skipping (no match): {file}")
+            full_path = os.path.join(folder_path, file)
+            unmatched_files.append(full_path)
+            print(f"No YouTube match (will apply base tags only): {file}")
             continue
         # Store full path and upload date for sorting
         full_path = os.path.join(folder_path, file)
@@ -143,7 +151,7 @@ def process_year_folder(folder_path, year, title_map):
 
     # Update ID3 tags in sorted order
     with open(log_path, "a", encoding="utf-8") as log_file:
-        for idx, (filepath, date) in enumerate(files_with_dates, start=1):
+        for idx, (filepath, _) in enumerate(files_with_dates, start=1):
             filename = os.path.basename(filepath)
 
             if filename in tagged_files:
@@ -173,7 +181,36 @@ def process_year_folder(folder_path, year, title_map):
                 tagged_files.add(filename)
 
                 print(f"Updated: {filename} → Track {idx}")
-            except Exception as e:
+            except (MutagenError, OSError, ValueError) as e:
+                print(f"Error with {filepath}: {e}")
+
+        # Apply base tags for files that were not found in the YouTube playlist.
+        for filepath in sorted(unmatched_files, key=lambda p: os.path.basename(p).lower()):
+            filename = os.path.basename(filepath)
+
+            if filename in tagged_files:
+                print(f"Skipping (already tagged): {filename}")
+                continue
+
+            try:
+                audio = EasyID3(filepath)
+                audio["artist"] = PODCAST_NAME
+                audio["albumartist"] = PODCAST_NAME
+                audio["album"] = year
+                audio.save(filepath)
+                id3 = ID3(filepath)
+
+                # Album date = Jan 1 of year
+                id3.delall("TDRC")
+                id3.add(TDRC(encoding=3, text=f"{year}-01-01"))
+                id3.save(filepath)
+
+                log_file.write(filename + "\n")
+                log_file.flush()
+                tagged_files.add(filename)
+
+                print(f"Updated (base tags only): {filename}")
+            except (MutagenError, OSError, ValueError) as e:
                 print(f"Error with {filepath}: {e}")
 
 if __name__ == "__main__":
@@ -182,9 +219,9 @@ if __name__ == "__main__":
         sys.exit(1)
     else:
         playlist = "https://www.youtube.com/playlist?list=PLvQNIIJjMEtotz4aW1lpSwLzqOXGvZpoG"
-        year = sys.argv[1]
+        year_label = sys.argv[1]
 
         print("Fetching playlist metadata via YouTube API...")
-        title_map = fetch_playlist_data(playlist)
-        print(f"Processing year: {year}")
-        process_year_folder(year, year, title_map)
+        playlist_title_map = fetch_playlist_data(playlist)
+        print(f"Processing year: {year_label}")
+        process_year_folder(year_label, year_label, playlist_title_map)
