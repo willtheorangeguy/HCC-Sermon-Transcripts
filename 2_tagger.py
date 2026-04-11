@@ -178,7 +178,7 @@ def process_year_folder(folder_path, year, title_map):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python 3_tagger.py <year>")
+        print("Usage: python 2_tagger.py <year>")
         sys.exit(1)
     else:
         playlist = "https://www.youtube.com/playlist?list=PLvQNIIJjMEtotz4aW1lpSwLzqOXGvZpoG"
