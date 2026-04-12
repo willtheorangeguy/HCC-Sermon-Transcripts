@@ -163,7 +163,7 @@ def process_year_folder(folder_path, year, title_map):
                 audio["artist"] = PODCAST_NAME
                 audio["albumartist"] = PODCAST_NAME
                 audio["album"] = year
-		audio["title"] = os.path.splitext(filename)[0]
+                audio["title"] = os.path.splitext(filename)[0]
                 audio["tracknumber"] = str(idx)
                 audio.save(filepath)
                 id3 = ID3(filepath)
@@ -198,7 +198,7 @@ def process_year_folder(folder_path, year, title_map):
                 audio["artist"] = PODCAST_NAME
                 audio["albumartist"] = PODCAST_NAME
                 audio["album"] = year
-		audio["title"] = os.path.splitext(filename)[0]
+                audio["title"] = os.path.splitext(filename)[0]
                 audio.save(filepath)
                 id3 = ID3(filepath)
 
